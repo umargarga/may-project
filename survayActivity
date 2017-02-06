@@ -1,6 +1,7 @@
 package com.example.administrator.takeaway;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,119 +17,104 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SurveyActivity extends AppCompatActivity {
     ArrayList<SurveyItem> survey = new ArrayList<SurveyItem>();
-    EditText nameEditText;
+    TextView nameText;
     RatingBar aRatingBar;
-    CheckBox regularCustomerCheckbox;
     Button btnSub;
     ListView lstView;
+    SurveyAdapter adapter;
 
     View.OnClickListener submitButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View arg0) {
-            SurveyItem s = new SurveyItem(
-                    nameEditText.getText().toString(),
-                    aRatingBar.getRating(),
-                    regularCustomerCheckbox.isChecked());
-            adapter.add(s);
+            Toast.makeText(getApplicationContext(), "Review Button clicked", Toast.LENGTH_SHORT).show();
+//            Intent intent = new Intent(this, ....);
+//            startActivity(intent);
         }
-    };
 
-    SurveyAdapter adapter;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_survey);
 
-        nameEditText =(EditText) findViewById(R.id.nameEditText);
-        aRatingBar = (RatingBar) findViewById(R.id.aRatingBar);
-        regularCustomerCheckbox.isChecked();
-        btnSub = (Button) findViewById(R.id.btnSvy);
-        lstView = (ListView) findViewById(R.id.lstView);
+        nameText =(TextView) findViewById(R.id.name);
+        aRatingBar = (RatingBar) findViewById(R.id.ratingBar);
+        btnSub = (Button) findViewById(R.id.button);
+        lstView = (ListView) findViewById(R.id.listView);
 
         survey.add(new SurveyItem("KFC", 1, false));
-        survey.add(new SurveyItem("McDonalds", 3, false));
+        survey.add(new SurveyItem("McDonalds", 4, false));
         survey.add(new SurveyItem("Chip Shop",3, false));
         Log.d("MK","Got here in Suvery Activity");
 
-        adapter = new SurveyAdapter(this, android.R.layout.simple_list_item_1, survey);
+
+        adapter = new SurveyAdapter(this, R.layout.list_view_item, survey);
 
         lstView.setAdapter(adapter);
+
+
 
         btnSub.setOnClickListener(submitButtonListener);
     }
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.memu.main, menu);
-        return true;
-    }
+    class SurveyItem {
+        private String name;
+        private float itemRatingBar;
+        private boolean regCust;
 
-}
-
-class SurveyItem {
-    private String name;
-    private float itemRatingBar;
-    private boolean regCust;
-
-    public SurveyItem(String name, float f, boolean regCust)
-
-    {
-        this.name=name;
-        this.itemRatingBar=f;
-        this.regCust=regCust;
-    }
-
-   public String getName() {
-        return name;
-    }
-}
-
-class SurveyAdapter extends ArrayAdapter<SurveyItem> {
-    private ArrayList<SurveyItem> objects;
-    LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    public SurveyAdapter(Context context, int resource, List objects) {
-        super(context, resource, objects);
-        this.objects = (ArrayList<SurveyItem>) objects;
-    }
-
-    public View getView(int position, View convertView, ViewGroup parent)
-    {
-
-        Log.d("MK","get View");
-
-        if(convertView==null) {
-            convertView=inflater.inflate(R.layout.list_item_view, null);
+        public SurveyItem(String name, float f, boolean regCust) {
+            this.name = name;
+            this.itemRatingBar = f;
+            this.regCust = regCust;
         }
 
-        SurveyItem surveyItem = objects.get(position);
-          ((TextView)convertView.findViewById(R.id.itemTextView)).setText(surveyItem.getName());
-          ((RatingBar)convertView.findViewById(R.id.itemRatingBar)).setRating(3f);
-          //ImageView iv = (ImageView)convertView.findViewById(R.id.itemIView);
-         // if(surveyItem.getitemRatingBar()>3)
-          //iv.setImageResource(R.mipmap.a);
-          //else
-          //iv.setImageResource(R.mipmap.b);
-        ;
-        return convertView;
+        public String getName() {
+            return name;
+        }
+
+        public float getItemRatingBar() {
+            return itemRatingBar;
+        }
+    }
+
+    class SurveyAdapter extends ArrayAdapter<SurveyItem> {
+        private ArrayList<SurveyItem> objects;
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        public SurveyAdapter(Context context, int resource, List objects) {
+            super(context, resource, objects);
+            this.objects = (ArrayList<SurveyItem>) objects;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Log.d("MK", "get View");
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.list_view_item, null);
+            }
+
+            SurveyItem surveyItem = objects.get(position);
+
+            ((TextView) convertView.findViewById(R.id.name)).setText(surveyItem.getName());
+
+            ((RatingBar) convertView.findViewById(R.id.ratingBar)).setRating(3f);
+
+            ImageView iv = (ImageView)convertView.findViewById(R.id.imageView);
+
+            if(surveyItem.getItemRatingBar()>3)
+            iv.setImageResource(R.mipmap.a);
+            else
+            iv.setImageResource(R.mipmap.b);
+
+            return convertView;
+
+        }
     }
 }
-
-
-
